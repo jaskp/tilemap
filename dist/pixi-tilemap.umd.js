@@ -2,7 +2,7 @@
  
 /*!
  * @pixi/tilemap - v3.2.0
- * Compiled Sat, 24 Apr 2021 21:20:23 UTC
+ * Compiled Thu, 29 Jul 2021 18:14:16 UTC
  *
  * @pixi/tilemap is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
@@ -122,6 +122,7 @@ this.PIXI.tilemap = this.PIXI.tilemap || {};
         const ANIM_COUNT_Y = ANIM_COUNT_X + 1; POINT_STRUCT[POINT_STRUCT["ANIM_COUNT_Y"] = ANIM_COUNT_Y] = "ANIM_COUNT_Y";
         const ANIM_DIVISOR = ANIM_COUNT_Y + 1; POINT_STRUCT[POINT_STRUCT["ANIM_DIVISOR"] = ANIM_DIVISOR] = "ANIM_DIVISOR";
         const ALPHA = ANIM_DIVISOR + 1; POINT_STRUCT[POINT_STRUCT["ALPHA"] = ALPHA] = "ALPHA";
+        const CUSTOM_OFFSET = ALPHA + 1; POINT_STRUCT[POINT_STRUCT["CUSTOM_OFFSET"] = CUSTOM_OFFSET] = "CUSTOM_OFFSET";
     })(POINT_STRUCT || (POINT_STRUCT = {}));
 
     const POINT_STRUCT_SIZE = (Object.keys(POINT_STRUCT).length / 2);
@@ -295,6 +296,7 @@ this.PIXI.tilemap = this.PIXI.tilemap || {};
 
 
 
+
      = {}
         )
         {
@@ -360,6 +362,7 @@ this.PIXI.tilemap = this.PIXI.tilemap || {};
                 animCountY = 1024,
                 animDivisor = 1,
                 alpha = 1,
+                customOffset = 0,
             } = options;
 
             const pb = this.pointsBuf;
@@ -380,6 +383,7 @@ this.PIXI.tilemap = this.PIXI.tilemap || {};
             pb.push(animCountY);
             pb.push(animDivisor);
             pb.push(alpha);
+            pb.push(customOffset);
 
             this.tilemapBounds.addFramePad(x, y, x + tileWidth, y + tileHeight, 0, 0);
 
@@ -428,6 +432,13 @@ this.PIXI.tilemap = this.PIXI.tilemap || {};
             pb[pb.length - (POINT_STRUCT_SIZE - POINT_STRUCT.ALPHA)] = alpha;
         }
 
+        tileCustomOffset(offset)
+        {
+            const pb = this.pointsBuf;
+
+            pb[pb.length - (POINT_STRUCT_SIZE - POINT_STRUCT.CUSTOM_OFFSET)] = offset;
+        }
+
         __init11() {this.renderCanvas = (renderer) =>
         {
             const plugin = renderer.plugins.tilemap;
@@ -458,15 +469,15 @@ this.PIXI.tilemap = this.PIXI.tilemap || {};
             renderer.context.fillStyle = '#000000';
             for (let i = 0, n = points.length; i < n; i += POINT_STRUCT_SIZE)
             {
-                let x1 = points[i + POINT_STRUCT.U] * tileAnim[0];
-                let y1 = points[i + POINT_STRUCT.V] * tileAnim[1];
+                let x1 = points[i + POINT_STRUCT.U];
+                let y1 = points[i + POINT_STRUCT.V];
                 const x2 = points[i + POINT_STRUCT.X];
                 const y2 = points[i + POINT_STRUCT.Y];
                 const w = points[i + POINT_STRUCT.TILE_WIDTH];
                 const h = points[i + POINT_STRUCT.TILE_HEIGHT];
 
-                x1 += points[i + POINT_STRUCT.ANIM_X] * renderer.plugins.tilemap.tileAnim[0];
-                y1 += points[i + POINT_STRUCT.ANIM_Y] * renderer.plugins.tilemap.tileAnim[1];
+                x1 += points[i + POINT_STRUCT.ANIM_X] * tileAnim[0];
+                y1 += points[i + POINT_STRUCT.ANIM_Y] * tileAnim[1];
 
                 const textureIndex = points[i + POINT_STRUCT.TEXTURE_INDEX];
                 const alpha = points[i + POINT_STRUCT.ALPHA];
@@ -631,6 +642,7 @@ this.PIXI.tilemap = this.PIXI.tilemap || {};
                     const animYEncoded = animY + (animHeight * 2048);
                     const animDivisor = points[i + POINT_STRUCT.ANIM_DIVISOR];
                     const alpha = points[i + POINT_STRUCT.ALPHA];
+                    const customOffset = points[i + POINT_STRUCT.CUSTOM_OFFSET];
 
                     let u0;
                     let v0; let u1;
@@ -692,6 +704,7 @@ this.PIXI.tilemap = this.PIXI.tilemap || {};
                     arr[sz++] = textureId;
                     arr[sz++] = animDivisor;
                     arr[sz++] = alpha;
+                    arr[sz++] = customOffset;
 
                     arr[sz++] = x + w;
                     arr[sz++] = y;
@@ -706,6 +719,7 @@ this.PIXI.tilemap = this.PIXI.tilemap || {};
                     arr[sz++] = textureId;
                     arr[sz++] = animDivisor;
                     arr[sz++] = alpha;
+                    arr[sz++] = customOffset;
 
                     arr[sz++] = x + w;
                     arr[sz++] = y + h;
@@ -720,6 +734,7 @@ this.PIXI.tilemap = this.PIXI.tilemap || {};
                     arr[sz++] = textureId;
                     arr[sz++] = animDivisor;
                     arr[sz++] = alpha;
+                    arr[sz++] = customOffset;
 
                     arr[sz++] = x;
                     arr[sz++] = y + h;
@@ -734,6 +749,7 @@ this.PIXI.tilemap = this.PIXI.tilemap || {};
                     arr[sz++] = textureId;
                     arr[sz++] = animDivisor;
                     arr[sz++] = alpha;
+                    arr[sz++] = customOffset;
                 }
 
                 vertexBuf.update(arr);
@@ -1607,7 +1623,7 @@ this.PIXI.tilemap = this.PIXI.tilemap || {};
             .replace(/%forloop%/gi, generateSampleSrc(maxTextures));
     }
 
-    var tilemapVertexTemplateSrc = "attribute vec2 aVertexPosition;\nattribute vec2 aTextureCoord;\nattribute vec4 aFrame;\nattribute vec2 aAnim;\nattribute float aAnimDivisor;\nattribute float aTextureId;\nattribute float aAlpha;\n\nuniform mat3 projTransMatrix;\nuniform vec2 animationFrame;\n\nvarying vec2 vTextureCoord;\nvarying float vTextureId;\nvarying vec4 vFrame;\nvarying float vAlpha;\n\nvoid main(void)\n{\n   gl_Position = vec4((projTransMatrix * vec3(aVertexPosition, 1.0)).xy, 0.0, 1.0);\n   vec2 animCount = floor((aAnim + 0.5) / 2048.0);\n   vec2 animFrameOffset = aAnim - animCount * 2048.0;\n   vec2 currentFrame = floor(animationFrame / aAnimDivisor);\n   vec2 animOffset = animFrameOffset * floor(mod(currentFrame + 0.5, animCount));\n\n   vTextureCoord = aTextureCoord + animOffset;\n   vFrame = aFrame + vec4(animOffset, animOffset);\n   vTextureId = aTextureId;\n   vAlpha = aAlpha;\n}\n";
+    var tilemapVertexTemplateSrc = "attribute vec2 aVertexPosition;\nattribute vec2 aTextureCoord;\nattribute vec4 aFrame;\nattribute vec2 aAnim;\nattribute float aAnimDivisor;\nattribute float aTextureId;\nattribute float aAlpha;\nattribute float aCustomOffset;\n\nuniform mat3 projTransMatrix;\nuniform vec2 animationFrame;\n\nvarying vec2 vTextureCoord;\nvarying float vTextureId;\nvarying vec4 vFrame;\nvarying float vAlpha;\n\nvoid main(void)\n{\n   gl_Position = vec4((projTransMatrix * vec3(aVertexPosition, 1.0)).xy, 0.0, 1.0);\n   vec2 animCount = floor((aAnim + 0.5) / 2048.0);\n   vec2 animFrameOffset = aAnim - animCount * 2048.0;\n   vec2 currentFrame = floor(animationFrame / aAnimDivisor) + aCustomOffset;\n   vec2 animOffset = animFrameOffset * floor(mod(currentFrame + 0.5, animCount));\n\n   vTextureCoord = aTextureCoord + animOffset;\n   vFrame = aFrame + vec4(animOffset, animOffset);\n   vTextureId = aTextureId;\n   vAlpha = aAlpha;\n}\n";
 
     var tilemapFragmentTemplateSrc = "varying vec2 vTextureCoord;\nvarying vec4 vFrame;\nvarying float vTextureId;\nvarying float vAlpha;\nuniform vec4 shadowColor;\nuniform sampler2D uSamplers[%count%];\nuniform vec2 uSamplerSize[%count%];\n\nvoid main(void)\n{\n   vec2 textureCoord = clamp(vTextureCoord, vFrame.xy, vFrame.zw);\n   float textureId = floor(vTextureId + 0.5);\n\n   vec4 color;\n   %forloop%\n   gl_FragColor = color * vAlpha;\n}\n";
 
@@ -1659,7 +1675,8 @@ this.PIXI.tilemap = this.PIXI.tilemap || {};
     	        .addAttribute('aAnim', buf, 0, false, 0, this.stride, 8 * 4)
     	        .addAttribute('aTextureId', buf, 0, false, 0, this.stride, 10 * 4)
                 .addAttribute('aAnimDivisor', buf, 0, false, 0, this.stride, 11 * 4)
-                .addAttribute('aAlpha', buf, 0, false, 0, this.stride, 12 * 4);
+                .addAttribute('aAlpha', buf, 0, false, 0, this.stride, 12 * 4)
+    						.addAttribute('aCustomOffset', buf, 0, false, 0, this.stride, 13 * 4);
     	}
 
     	

@@ -165,12 +165,14 @@ declare class Tilemap extends Container {
         animCountY?: number;
         animDivisor?: number;
         alpha?: number;
+        customOffset?: number;
     }): this;
     tileRotate(rotate: number): void;
     tileAnimX(offset: number, count: number): void;
     tileAnimY(offset: number, count: number): void;
     tileAnimDivisor(divisor: number): void;
     tileAlpha(alpha: number): void;
+    tileCustomOffset(offset: number): void;
     renderCanvas: (renderer: CanvasRenderer) => void;
     renderCanvasCore(renderer: CanvasRenderer): void;
     private vbId;
