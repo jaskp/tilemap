@@ -25,6 +25,7 @@ enum POINT_STRUCT {
     ANIM_COUNT_Y,
     ANIM_DIVISOR,
     ALPHA,
+    CUSTOM_OFFSET
 }
 
 export const POINT_STRUCT_SIZE = (Object.keys(POINT_STRUCT).length / 2);
@@ -198,6 +199,7 @@ export class Tilemap extends Container
             animCountY?: number,
             animDivisor?: number,
             alpha?: number,
+            customOffset?: number,
         } = {}
     ): this
     {
@@ -263,6 +265,7 @@ export class Tilemap extends Container
             animCountY = 1024,
             animDivisor = 1,
             alpha = 1,
+            customOffset = 0,
         } = options;
 
         const pb = this.pointsBuf;
@@ -283,6 +286,7 @@ export class Tilemap extends Container
         pb.push(animCountY);
         pb.push(animDivisor);
         pb.push(alpha);
+        pb.push(customOffset);
 
         this.tilemapBounds.addFramePad(x, y, x + tileWidth, y + tileHeight, 0, 0);
 
@@ -329,6 +333,13 @@ export class Tilemap extends Container
         const pb = this.pointsBuf;
 
         pb[pb.length - (POINT_STRUCT_SIZE - POINT_STRUCT.ALPHA)] = alpha;
+    }
+
+    tileCustomOffset(offset: number): void
+    {
+        const pb = this.pointsBuf;
+
+        pb[pb.length - (POINT_STRUCT_SIZE - POINT_STRUCT.CUSTOM_OFFSET)] = offset;
     }
 
     renderCanvas = (renderer: CanvasRenderer): void =>
@@ -534,6 +545,7 @@ export class Tilemap extends Container
                 const animYEncoded = animY + (animHeight * 2048);
                 const animDivisor = points[i + POINT_STRUCT.ANIM_DIVISOR];
                 const alpha = points[i + POINT_STRUCT.ALPHA];
+                const customOffset = points[i + POINT_STRUCT.CUSTOM_OFFSET];
 
                 let u0: number;
                 let v0: number; let u1: number;
@@ -595,6 +607,7 @@ export class Tilemap extends Container
                 arr[sz++] = textureId;
                 arr[sz++] = animDivisor;
                 arr[sz++] = alpha;
+                arr[sz++] = customOffset;
 
                 arr[sz++] = x + w;
                 arr[sz++] = y;
@@ -609,6 +622,7 @@ export class Tilemap extends Container
                 arr[sz++] = textureId;
                 arr[sz++] = animDivisor;
                 arr[sz++] = alpha;
+                arr[sz++] = customOffset;
 
                 arr[sz++] = x + w;
                 arr[sz++] = y + h;
@@ -623,6 +637,7 @@ export class Tilemap extends Container
                 arr[sz++] = textureId;
                 arr[sz++] = animDivisor;
                 arr[sz++] = alpha;
+                arr[sz++] = customOffset;
 
                 arr[sz++] = x;
                 arr[sz++] = y + h;
@@ -637,6 +652,7 @@ export class Tilemap extends Container
                 arr[sz++] = textureId;
                 arr[sz++] = animDivisor;
                 arr[sz++] = alpha;
+                arr[sz++] = customOffset;
             }
 
             vertexBuf.update(arr);

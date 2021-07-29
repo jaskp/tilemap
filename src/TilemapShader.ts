@@ -54,7 +54,8 @@ export class TilemapGeometry extends Geometry
 	        .addAttribute('aAnim', buf, 0, false, 0, this.stride, 8 * 4)
 	        .addAttribute('aTextureId', buf, 0, false, 0, this.stride, 10 * 4)
             .addAttribute('aAnimDivisor', buf, 0, false, 0, this.stride, 11 * 4)
-            .addAttribute('aAlpha', buf, 0, false, 0, this.stride, 12 * 4);
+            .addAttribute('aAlpha', buf, 0, false, 0, this.stride, 12 * 4)
+						.addAttribute('aCustomOffset', buf, 0, false, 0, this.stride, 13 * 4);
 	}
 
 	buf: Buffer;
