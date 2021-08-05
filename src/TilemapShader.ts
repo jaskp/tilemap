@@ -37,7 +37,7 @@ export class TilemapShader extends Shader
 
 export class TilemapGeometry extends Geometry
 {
-	vertSize = 13;
+	vertSize = 14;
 	vertPerQuad = 4;
 	stride = this.vertSize * 4;
 	lastTimeAccess = 0;
