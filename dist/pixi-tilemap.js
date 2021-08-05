@@ -2,7 +2,7 @@
  
 /*!
  * @pixi/tilemap - v3.2.0
- * Compiled Thu, 05 Aug 2021 19:29:58 UTC
+ * Compiled Thu, 05 Aug 2021 19:41:20 UTC
  *
  * @pixi/tilemap is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
@@ -1656,7 +1656,7 @@ class TilemapShader extends core.Shader
 
 class TilemapGeometry extends core.Geometry
 {
-	__init2() {this.vertSize = 13;}
+	__init2() {this.vertSize = 14;}
 	__init3() {this.vertPerQuad = 4;}
 	__init4() {this.stride = this.vertSize * 4;}
 	__init5() {this.lastTimeAccess = 0;}
