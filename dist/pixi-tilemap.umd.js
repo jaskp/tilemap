@@ -2,7 +2,7 @@
  
 /*!
  * @pixi/tilemap - v3.2.0
- * Compiled Thu, 29 Jul 2021 18:14:16 UTC
+ * Compiled Thu, 05 Aug 2021 19:29:58 UTC
  *
  * @pixi/tilemap is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license
